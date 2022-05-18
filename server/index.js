@@ -26,6 +26,7 @@ const queryBuilder = require('./query-builder');
 const WatsonDiscoverySetup = require('../lib/watson-discovery-setup');
 const DiscoveryV2 = require('ibm-watson/discovery/v2');
 const utils = require('../lib/utils');
+const { CloudPakForDataAuthenticator } = require('ibm-watson/auth');
 
 /**
  * Back end server which handles initializing the Watson Discovery
@@ -50,6 +51,17 @@ discoveryDocs = discoveryDocs.slice(0,300);
 // Note that credentials are pulled from env
 const discovery = new DiscoveryV2({
   version: '2020-08-30',
+  serviceUrl: process.env.DISCOVERY_URL,
+  disableSslVerification: true,
+  //authenticator: new IamAuthenticator({
+  //  apikey: process.env.DISCOVERY_APIKEY,
+  //}),
+  authenticator: new CloudPakForDataAuthenticator({
+    username: process.env.USERNAME,
+    password: process.env.PASSWORD,
+    url: process.env.AUTH_URL,
+    disableSslVerification: true,
+  }),
 });
 
 const discoverySetup = new WatsonDiscoverySetup(discovery);
